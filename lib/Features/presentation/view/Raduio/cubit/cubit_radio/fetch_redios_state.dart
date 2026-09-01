@@ -14,6 +14,9 @@ final class FetchRediosSucess extends FetchRediosState {
   final bool isPlaying;
 
   const FetchRediosSucess({required this.radiolist, this.isPlaying = false});
+
+  @override
+  List<Object> get props => [radiolist, isPlaying];
 }
 
 final class FetchRediosFailer extends FetchRediosState {

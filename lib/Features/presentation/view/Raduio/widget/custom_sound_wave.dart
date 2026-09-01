@@ -8,7 +8,7 @@ class CustomSoundWave extends StatefulWidget {
   const CustomSoundWave({
     super.key,
     required this.title,
-    required this.isPlaying,
+    this.isPlaying = false,
     required this.onpressed,
   });
   final String title;

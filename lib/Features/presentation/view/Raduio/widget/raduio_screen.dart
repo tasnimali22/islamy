@@ -23,11 +23,10 @@ class RaduioScreen extends StatelessWidget {
                 child: CustomContainTapBar(
                   title: state.radiolist[index].name ?? "",
                   isPlaying:
-                      (context.watch<FetchRediosCubit>().playurl == item) &&
+                      context.watch<FetchRediosCubit>().currentIndex == index &&
                       context.watch<FetchRediosCubit>().audio.playing,
                   onpressed: () {
-                    context.read<FetchRediosCubit>().play(item);
-                    context.read<FetchRediosCubit>().playurl;
+                    context.read<FetchRediosCubit>().play(item, index);
                   },
                 ),
               );

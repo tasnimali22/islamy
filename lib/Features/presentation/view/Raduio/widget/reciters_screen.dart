@@ -24,9 +24,13 @@ class RecitersScreen extends StatelessWidget {
                 child: CustomContainTapBar(
                   title: state.reciterlist[index].name ?? " ",
                   isPlaying:
-                      context.watch<RecitersCubit>().playurl == reciteritem,
+                      context.watch<RecitersCubit>().currentIndex == index &&
+                      context.watch<RecitersCubit>().audio.playing,
                   onpressed: () {
-                    context.read<RecitersCubit>().playReciters(reciteritem);
+                    context.read<RecitersCubit>().playReciters(
+                      reciteritem,
+                      index,
+                    );
                   },
                 ),
               );

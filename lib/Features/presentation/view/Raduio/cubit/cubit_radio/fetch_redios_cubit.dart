@@ -13,12 +13,18 @@ class FetchRediosCubit extends Cubit<FetchRediosState> {
   final AudioPlayer audio = AudioPlayer();
 
   String? playurl;
+  int? currentIndex;
 
   Future<List<Radio>> getRadio() async {
     emit(FetchRediosloading());
     try {
       radio = await RadiosApi().getRadio();
-      emit(FetchRediosSucess(radiolist: radio));
+      emit(
+        FetchRediosSucess(
+          radiolist: List.from(radio),
+          isPlaying: playurl != null && audio.playing,
+        ),
+      );
       return radio;
     } catch (e) {
       emit(FetchRediosFailer(errMassage: e.toString()));
@@ -26,27 +32,36 @@ class FetchRediosCubit extends Cubit<FetchRediosState> {
     }
   }
 
-  Future<void> play(String url) async {
+  Future<void> play(String url, int index) async {
     try {
-      if (playurl == url && audio.playing) {
-        await audio.pause();
-        emit(FetchRediosSucess(radiolist: radio));
+      if (currentIndex == index) {
         if (audio.playing) {
-          await audio.stop();
-        }
-        playurl = url;
-        emit(FetchRediosSucess(radiolist: radio));
-      } else {
-        if (playurl != url) {
-          await audio.setUrl(url);
+          await audio.pause();
+          playurl = null;
+          currentIndex = null;
+        } else {
           await audio.play();
           playurl = url;
+          currentIndex = index;
         }
+      } else {
+        if (playurl != null && audio.playing) {
+          await audio.stop();
+        }
+        await audio.setUrl(url);
+        await audio.play();
+        playurl = url;
+        currentIndex = index;
       }
     } catch (e) {
       // Handle error silently
     }
-    emit(FetchRediosSucess(radiolist: radio));
+    emit(
+      FetchRediosSucess(
+        radiolist: List.from(radio),
+        isPlaying: currentIndex == index && audio.playing,
+      ),
+    );
   }
 
   @override

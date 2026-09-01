@@ -39,7 +39,7 @@ class CustomSura extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           SvgPicture.asset(DataAssets.suraNumber),
-          Text("$suraNamber", style: Styles.textStylew14),
+          Text("${suraNamber + 1}", style: Styles.textStylew14),
         ],
       ),
       title: Text(lEntitle, style: Styles.textStylew20),

@@ -12,12 +12,18 @@ class RecitersCubit extends Cubit<RecitersState> {
   List<Reciter> ractiter = [];
   final AudioPlayer audio = AudioPlayer();
   String? playurl;
+  int? currentIndex;
 
   Future<List<Reciter>> getReciter() async {
     emit(RecitersLoading());
     try {
       ractiter = await RecitersAPI().getReciter();
-      emit(RecitersSucess(reciterlist: ractiter));
+      emit(
+        RecitersSucess(
+          reciterlist: List.from(ractiter),
+          isPlaying: playurl != null && audio.playing,
+        ),
+      );
       return ractiter;
     } catch (e) {
       emit(RecitersFailer(errMassage: e.toString()));
@@ -25,26 +31,36 @@ class RecitersCubit extends Cubit<RecitersState> {
     }
   }
 
-  Future<void> playReciters(String url) async {
+  Future<void> playReciters(String url, int index) async {
     try {
-      if (playurl == url && audio.playing) {
-        await audio.stop();
-        playurl = null;
-        emit(RecitersSucess(reciterlist: ractiter));
+      if (currentIndex == index) {
         if (audio.playing) {
+          await audio.pause();
+          playurl = null;
+          currentIndex = null;
+        } else {
+          await audio.play();
+          playurl = url;
+          currentIndex = index;
+        }
+      } else {
+        if (playurl != null && audio.playing) {
           await audio.stop();
         }
-        playurl = url;
-        emit(RecitersSucess(reciterlist: ractiter));
-      } else {
         await audio.setUrl(url);
         await audio.play();
         playurl = url;
+        currentIndex = index;
       }
     } catch (e) {
       return;
     }
-    emit(RecitersSucess(reciterlist: ractiter));
+    emit(
+      RecitersSucess(
+        reciterlist: List.from(ractiter),
+        isPlaying: currentIndex == index && audio.playing,
+      ),
+    );
   }
 
   @override

@@ -16,6 +16,9 @@ final class RecitersSucess extends RecitersState {
   final bool isPlaying;
 
   const RecitersSucess({required this.reciterlist, this.isPlaying = false});
+
+  @override
+  List<Object> get props => [reciterlist, isPlaying];
 }
 
 final class RecitersFailer extends RecitersState {

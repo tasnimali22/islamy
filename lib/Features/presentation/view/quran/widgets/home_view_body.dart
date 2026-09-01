@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:islamyapp/Features/introduction_view/widget/custom_stack.dart';
 import 'package:islamyapp/Features/presentation/view/quran/widgets/custom_list_v.iew.dart';
 import 'package:islamyapp/Features/presentation/view/quran/widgets/custom_sliver_list.dart';
+import 'package:islamyapp/Features/presentation/view/quran/widgets/custom_sliver_search.dart';
 import 'package:islamyapp/Features/presentation/view/quran/widgets/custom_text_filed.dart';
 import 'package:islamyapp/core/utils/styles.dart';
 
@@ -14,24 +15,11 @@ class HomeViewBody extends StatefulWidget {
 
 class _HomeViewBodyState extends State<HomeViewBody> {
   final TextEditingController _searchController = TextEditingController();
-  final searchFocusNode = FocusNode();
   bool isSearch = false;
-  List<int> filterSura = [];
-
-  @override
-  void initState() {
-    searchFocusNode.addListener(() {
-      setState(() {
-        isSearch = searchFocusNode.hasFocus;
-      });
-    });
-    super.initState();
-  }
 
   @override
   void dispose() {
     _searchController.dispose();
-    searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -49,10 +37,9 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                 const CustomStack(),
                 CustomTextfield(
                   controller: _searchController,
-                  focusNode: searchFocusNode,
                   onChanged: (value) {
                     setState(() {
-                      isSearch = value.isNotEmpty;
+                      isSearch = value.trim().isNotEmpty;
                     });
                   },
                 ),
@@ -82,8 +69,9 @@ class _HomeViewBodyState extends State<HomeViewBody> {
               ],
             ),
           ),
+          if (!isSearch) const CustomSliverList(),
           if (isSearch)
-            CustomSliverList(searchQuery: _searchController.value.text),
+            CustomSliverSearch(searchQuery: _searchController.value.text),
         ],
       ),
     );
